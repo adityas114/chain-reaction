@@ -263,6 +263,9 @@ public class Cell extends StackPane {
                 					grid.noOfCellsOfPlayer[grid.currentPlayer]++;
                 				}
                 			}
+                			else {
+                				grid.noOfCellsOfPlayer[grid.currentPlayer]++;
+                			}
             				grid.cells[this.x - 1][this.y].currentPlayer = currentPlayer;
                     		Event.fireEvent(grid.cells[this.x - 1][this.y], new MouseEvent(MouseEvent.MOUSE_CLICKED, 0,
                                     0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
@@ -278,6 +281,9 @@ public class Cell extends StackPane {
                 					grid.noOfCellsOfPlayer[grid.currentPlayer]++;
                 				}
                 			}
+                			else {
+                				grid.noOfCellsOfPlayer[grid.currentPlayer]++;
+                			}
                     		grid.cells[this.x + 1][this.y].currentPlayer = currentPlayer;
                     		Event.fireEvent(grid.cells[this.x + 1][this.y], new MouseEvent(MouseEvent.MOUSE_CLICKED, 0,
                                     0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
@@ -292,6 +298,9 @@ public class Cell extends StackPane {
                     				grid.noOfCellsOfPlayer[grid.cells[this.x][this.y + 1].currentPlayer]--;
                 					grid.noOfCellsOfPlayer[grid.currentPlayer]++;
                 				}
+                			}
+                			else {
+                				grid.noOfCellsOfPlayer[grid.currentPlayer]++;
                 			}
                     		grid.cells[this.x][this.y + 1].currentPlayer = currentPlayer;
                     		Event.fireEvent(grid.cells[this.x][this.y + 1], new MouseEvent(MouseEvent.MOUSE_CLICKED, 0,
