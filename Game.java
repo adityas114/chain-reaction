@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -55,12 +56,21 @@ public class Game extends Application {
 		ChoiceBox<String> selectGridSize = new ChoiceBox<String>(FXCollections.observableArrayList(
 			"9 x 6", "15 x 10"
 		));
-		selectGridSize.setValue("9 x 6");
-//		selectGridSize.setOnAction(event -> {
-//			System.out.println(selectNoOfPlayers.getValue().length());
-//			grid.m = Integer.parseInt(selectNoOfPlayers.getValue().substring(0, 1));
-//			grid.n = Integer.parseInt(selectNoOfPlayers.getValue().substring(4, 5));
-//		});
+		if (settings.m == 9) {
+			selectGridSize.setValue("9 x 6");
+		}
+		else {
+			selectGridSize.setValue("15 x 10");
+		}
+		selectGridSize.setOnAction(event -> {
+			if (selectGridSize.getValue() == "9 x 6") {
+				settings.m = 9;
+				settings.n = 6;
+			} else {
+				settings.m = 15;
+				settings.n = 10;
+			}
+		});
 		gridSize.setTranslateX(50);
 		gridSize.setTranslateY(150);
 		selectGridSize.setTranslateX(220);
@@ -68,28 +78,50 @@ public class Game extends Application {
 		settingsPage.getChildren().add(gridSize);
 		settingsPage.getChildren().add(selectGridSize);
 	
-		for (int i = 0; i < settings.noOfPlayers; i++) {
+		ChoiceBox[] selectPlayers = new ChoiceBox[8];
+		for (int i = 0; i < 8; i++) {
 			Text player = new Text();
 			player.setText("Player " + (i + 1) + " colour");
 			ChoiceBox<String> selectPlayer = new ChoiceBox<String>(FXCollections.observableArrayList(
-				"Red", "Green", "Blue", "White", "Yellow", "Beige", "Brown", "Pink"
+				"Red", "Green", "Blue", "White", "Yellow", "Light Blue", "Purple", "Pink"
 			));
-			if (i == 0) {
-				selectPlayer.setOnAction(event -> {
-		        	settings.players.get(0).colour = selectPlayer.getValue();
-		        });
-			}
+			selectPlayers[i] = selectPlayer;
 			
 			selectPlayer.setValue(settings.players.get(i).colour);
 			player.setTranslateX(50);
 			player.setTranslateY(200 + 50 * i);
 			selectPlayer.setTranslateX(220);
 			selectPlayer.setTranslateY(175 + 50 * i);
-			settingsPage.getChildren().add(selectPlayer);
-			settingsPage.getChildren().add(player);
+			if (i < settings.noOfPlayers) {
+				settingsPage.getChildren().add(selectPlayer);
+				settingsPage.getChildren().add(player);
+			}
 			
 			settings.players.get(i).colour = selectPlayer.getValue();
 		}
+		
+		for (int i = 0; i < 8; i++) {
+			int k = i;
+			Player _player = settings.players.get(i);
+			ChoiceBox<String> selectPlayer = selectPlayers[i];
+			selectPlayer.setOnAction(event -> {
+				String colour = _player.colour;
+				for (int j = 0; j < 8; j++) {
+					if (settings.players.get(j).colour == selectPlayer.getValue()) {
+						selectPlayers[j].setValue(colour);
+						settings.presentColours[j] = colour;
+					}
+				}
+				settings.presentColours[k] = selectPlayer.getValue();
+				_player.colour = selectPlayer.getValue();
+		    });
+		}
+		
+		
+//		Player _player = settings.players.get(i);
+//		selectPlayer.setOnAction(event -> {
+//			_player.colour = selectPlayer.getValue();
+//	    });
 		
 		return settingsPage;
 	}
@@ -124,21 +156,26 @@ public class Game extends Application {
 		return menu;
 	}
 	
-	private Parent createContent() {
+	public Parent createContent() {
+		grid = new Grid();
+		grid.settings = settings;
+		grid.m = settings.m;
+		grid.n = settings.n;
+		grid.root = root;
 		root.getChildren().clear();
-		stage.setHeight(750);
-		stage.setWidth(920);
-        root.setStyle("-fx-background-color: #073e42;");
+		stage.setHeight(grid.m * 50 + 200);
+		stage.setWidth(grid.n * 50 + 140);
+        root.setStyle("-fx-background-color: #000000;");
         Cell.grid = grid;
-        grid.cells = new Cell[6][9];
+        grid.cells = new Cell[grid.m][grid.n];
+        grid.rectangles = new Rectangle[grid.m][grid.n];
+        grid.panes = new Pane[grid.m][grid.n];
         
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 9; j++) {
-                Cell cell = new Cell();
-                cell.x = i;	
-                cell.y = j;
-                cell.setTranslateX(j * 100);
-                cell.setTranslateY(100 + i * 100);
+        for (int i = 0; i < grid.m; i++) {
+            for (int j = 0; j < grid.n; j++) {
+                Cell cell = new Cell(i, j);
+                cell.setTranslateX(70 + j * 50);
+                cell.setTranslateY(100 + i * 50);
                 grid.cells[i][j] = cell;
                
                 if (i == 0 && j == 0 || i == 0 && j == grid.n - 1 || i == grid.m - 1 && j == 0 || i == grid.m - 1 && j == grid.n - 1) {
