@@ -12,6 +12,7 @@ import javafx.scene.paint.Paint;
  * @author  Aditya Singh
  * @author  Shivin Dass
  */
+
 public class Settings implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

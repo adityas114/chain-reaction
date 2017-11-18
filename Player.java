@@ -7,6 +7,7 @@ import java.io.Serializable;
  * @author  Aditya Singh
  * @author  Shivin Dass
  */
+
 public class Player implements Serializable {
 	private static final long serialVersionUID = 1L;
 
