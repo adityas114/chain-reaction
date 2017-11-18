@@ -98,6 +98,11 @@ public class Cell extends StackPane implements Serializable {
      * The length of the chain, during the chain reaction.
      */
 	int chain = 0;
+
+	/**
+     * Same function as this.chain, but used for parallel explosions.
+     */
+    int pseudoChain = 0;
 	
 	/**
      * Object used to rotate the orbs in the cell.
@@ -283,7 +288,7 @@ public class Cell extends StackPane implements Serializable {
     		grid.firstTurn = true;
     	}
     	
-    	if (this.chain >= 2) {
+    	if (this.chain >= 2 && currentPlayer != -1) {
     		grid.currentPlayer = currentPlayer;
     	}
     	
@@ -372,7 +377,7 @@ public class Cell extends StackPane implements Serializable {
             	}
         	}
         	
-        	if (!transition && chain == 0) {
+        	if (!transition && pseudoChain == 0) {
         		if (grid.firstTurn) {
             		int cnt = 0;
                 	int k = -1;
@@ -421,6 +426,7 @@ public class Cell extends StackPane implements Serializable {
         	if (clickCount == 0) {
         		this.chain = 0;
         	}
+        	this.pseudoChain = 0;
         	transition = false;
         	
 			ObjectOutputStream out=null;
@@ -507,6 +513,7 @@ public class Cell extends StackPane implements Serializable {
         
   		for (int i = 0; i < n; i++) {
   			grid.cells[xCoordinates[i]][yCoordinates[i]].chain = this.chain + 1;
+  			grid.cells[xCoordinates[i]][yCoordinates[i]].pseudoChain = this.pseudoChain + 1;
   			grid.cells[xCoordinates[i]][yCoordinates[i]].clickCount++;
   		}
   		
@@ -632,7 +639,7 @@ public class Cell extends StackPane implements Serializable {
 	        }
 	    }
 	
-	    if (chain == 0) {
+	    if (pseudoChain == 0) {
 	        grid.currentPlayer = (grid.currentPlayer + 1) % grid.settings.noOfPlayers;
 	        while (grid.eliminatedPlayer[grid.currentPlayer]) {
 	            grid.currentPlayer = (grid.currentPlayer + 1) % grid.settings.noOfPlayers;
